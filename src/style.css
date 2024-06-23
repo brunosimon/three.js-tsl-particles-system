@@ -1,0 +1,39 @@
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body
+{
+    overflow: hidden;
+}
+
+.canvas
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}
+
+.credits
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 4px;
+    z-index: 1;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    color: #fff;
+    pointer-events: none;
+    user-select: none;
+}
+
+.credits a
+{
+    pointer-events: auto;
+    color: inherit;
+}
