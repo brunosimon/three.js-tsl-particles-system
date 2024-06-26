@@ -8,7 +8,7 @@ export default class
 {
     initialized = false
     
-    constructor(renderer, count = 1000)
+    constructor(renderer, count = 10000)
     {
         // Setup
         // this.initialized = false
@@ -35,7 +35,7 @@ export default class
         this.uniforms.gravity = uniform(vec3(0, -0.5, 0))
         this.uniforms.floorY = uniform(-0.95)
         this.uniforms.floorDamping = uniform(0.1)
-        this.uniforms.size = uniform(0.2)
+        this.uniforms.size = uniform(0.075)
         this.uniforms.solidRatio = uniform(0.05)
         this.uniforms.solidAlpha = uniform(5)
         this.uniforms.glowSpread = uniform(0.02)
