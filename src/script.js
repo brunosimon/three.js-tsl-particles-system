@@ -79,8 +79,8 @@ scene.add(emitter.object)
 emitter.controls = new TransformControls(camera, renderer.domElement)
 emitter.controls.attach(emitter.object)
 scene.add(emitter.controls)
-emitter.controls.visible = false
-emitter.controls.enabled = false
+emitter.controls.visible = true
+emitter.controls.enabled = emitter.controls.visible
 
 emitter.controls.addEventListener( 'dragging-changed', (event) =>
 {

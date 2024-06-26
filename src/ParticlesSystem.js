@@ -14,7 +14,6 @@ export default class
         // this.initialized = false
         this.renderer = renderer
         this.emitterPosition = new THREE.Vector3()
-        this.emitterPreviousPosition = new THREE.Vector3()
         this.count = count
 
         // Uniforms
@@ -22,7 +21,9 @@ export default class
         this.uniforms.colorIn = uniform(color('#ff7300'))
         this.uniforms.colorOut = uniform(color('#006eff'))
         this.uniforms.emitterPosition = uniform(vec3())
+        this.uniforms.emitterPreviousPosition = uniform(vec3())
         this.uniforms.emitterVelocity = uniform(vec3())
+        this.uniforms.emitterPreviousVelocity = uniform(vec3())
         this.uniforms.emitterRadius = uniform(0.01)
         this.uniforms.emitterVelocityStrength = uniform(0.4)
         this.uniforms.initialVelocity = uniform(vec3(0, 0, 0))
@@ -118,11 +119,17 @@ export default class
                     instanceIndex.add(uint(Math.random() * 0xffffff)).hash().sub(0.5)
                 ).normalize()
 
+                const mixStrength = instanceIndex.add(uint(Math.random() * 0xffffff)).hash()
+                // const mixStrength = 0
+
                 // Position
-                position.assign(this.uniforms.emitterPosition.add(randomDirection.mul(this.uniforms.emitterRadius)))
+                const newPosition = mix(this.uniforms.emitterPosition, this.uniforms.emitterPreviousPosition, mixStrength)
+                newPosition.addAssign(randomDirection.mul(this.uniforms.emitterRadius))
+                position.assign(newPosition)
 
                 // Velocity
-                velocity.assign(this.uniforms.emitterVelocity.mul(this.uniforms.emitterVelocityStrength).add(randomDirection.mul(this.uniforms.initialRandomVelocity)).add(this.uniforms.initialVelocity))
+                const newVelocity = mix(this.uniforms.emitterVelocity, this.uniforms.emitterPreviousVelocity, mixStrength)
+                velocity.assign(newVelocity.mul(this.uniforms.emitterVelocityStrength).add(randomDirection.mul(this.uniforms.initialRandomVelocity)).add(this.uniforms.initialVelocity))
             })
 
             life.assign(newLife.mod(1))
@@ -202,8 +209,7 @@ export default class
     update(deltaTime)
     {
         // Update velocity
-        const velocity = this.emitterPosition.clone().sub(this.emitterPreviousPosition).divideScalar(deltaTime)
-        this.emitterPreviousPosition.copy(this.emitterPosition)
+        const velocity = this.emitterPosition.clone().sub(this.uniforms.emitterPreviousPosition.value).divideScalar(deltaTime)
         this.uniforms.emitterVelocity.value.copy(velocity)
 
         // Update position
@@ -211,5 +217,9 @@ export default class
 
         // Compute update
         this.renderer.compute(this.particlesUpdateCompute)
+
+        // Update previous values
+        this.uniforms.emitterPreviousPosition.value.copy(this.uniforms.emitterPosition.value)
+        this.uniforms.emitterPreviousVelocity.value.copy(this.uniforms.emitterVelocity.value)
     }
 }
